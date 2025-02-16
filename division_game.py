@@ -64,14 +64,29 @@ if st.session_state.game_active:
             st.write(f"Total time: {total_time:.2f} seconds")
 
         # Display recap table with highlighted wrong answers
-        recap_data = {
-            "Dividend": [q[0] for q in st.session_state.user_answers],
-            "Divisor": [q[1] for q in st.session_state.user_answers],
-            "Your Answer": [f"<span style='color: #ff4d4d;'>{q[2]}</span>" if q[2] != q[3] else q[2] for q in st.session_state.user_answers],
-            "Correct Answer": [q[3] for q in st.session_state.user_answers]
-        }
-        recap_df = pd.DataFrame(recap_data)
-        st.markdown(recap_df.to_html(escape=False), unsafe_allow_html=True)
+        recap_data = []
+        for q in st.session_state.user_answers:
+            if q[2] != q[3]:
+                recap_data.append(f"<tr style='background-color: #ffcccc;'><td>{q[0]}</td><td>{q[1]}</td><td>{q[2]}</td><td>{q[3]}</td></tr>")
+            else:
+                recap_data.append(f"<tr><td>{q[0]}</td><td>{q[1]}</td><td>{q[2]}</td><td>{q[3]}</td></tr>")
+
+        recap_table = f"""
+        <table>
+            <thead>
+                <tr>
+                    <th>Dividend</th>
+                    <th>Divisor</th>
+                    <th>Your Answer</th>
+                    <th>Correct Answer</th>
+                </tr>
+            </thead>
+            <tbody>
+                {''.join(recap_data)}
+            </tbody>
+        </table>
+        """
+        st.markdown(recap_table, unsafe_allow_html=True)
 
         if st.button("Play Again"):
             st.session_state.game_active = False
