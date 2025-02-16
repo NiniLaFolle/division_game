@@ -1,13 +1,12 @@
-import time
 import random
 import streamlit as st
-
+import time
 import pandas as pd
 
-def generate_numbers(maximum_divisor, maximum_quotient):
+def generate_numbers(max_divisor, max_quotient):
     """Generate a random dividend and divisor for integer division."""
-    generated_divisor = random.randint(1, maximum_divisor)  # Avoid zero as divisor
-    generated_dividend = generated_divisor * random.randint(1, maximum_quotient)  # Ensure exact division
+    generated_divisor = random.randint(1, max_divisor)  # Avoid zero as divisor
+    generated_dividend = generated_divisor * random.randint(1, max_quotient)  # Ensure exact division
     return generated_dividend, generated_divisor
 
 st.title("Division Game")
@@ -42,10 +41,11 @@ if st.session_state.game_active:
         dividend, divisor = st.session_state.questions[st.session_state.current_index]
         st.write(f"Question {st.session_state.current_index + 1}: {dividend} ÷ {divisor} = ?")
 
-        user_input = st.number_input("Your answer:", min_value=0, step=1, format="%d",
-                                     key=f"input_{st.session_state.current_index}")
+        with st.form(key=f"form_{st.session_state.current_index}"):
+            user_input = st.number_input("Your answer:", min_value=0, step=1, format="%d", key=f"input_{st.session_state.current_index}", value=None)
+            submit_button = st.form_submit_button(label="Submit")
 
-        if st.button("Submit"):
+        if submit_button:
             correct_result = dividend // divisor
             st.session_state.user_answers.append((dividend, divisor, user_input, correct_result))
             if user_input == correct_result:
@@ -77,4 +77,3 @@ if st.session_state.game_active:
             st.session_state.game_active = False
             st.session_state.questions = []
             st.rerun()
-            
