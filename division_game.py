@@ -63,15 +63,15 @@ if st.session_state.game_active:
         if total_time:
             st.write(f"Total time: {total_time:.2f} seconds")
 
-        # Display recap table
+        # Display recap table with highlighted wrong answers
         recap_data = {
             "Dividend": [q[0] for q in st.session_state.user_answers],
             "Divisor": [q[1] for q in st.session_state.user_answers],
-            "Your Answer": [q[2] for q in st.session_state.user_answers],
+            "Your Answer": [f"<span style='color: #ff4d4d;'>{q[2]}</span>" if q[2] != q[3] else q[2] for q in st.session_state.user_answers],
             "Correct Answer": [q[3] for q in st.session_state.user_answers]
         }
         recap_df = pd.DataFrame(recap_data)
-        st.table(recap_df)
+        st.markdown(recap_df.to_html(escape=False), unsafe_allow_html=True)
 
         if st.button("Play Again"):
             st.session_state.game_active = False
